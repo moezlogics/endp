@@ -1,0 +1,53 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GET = GET;
+exports.POST = POST;
+exports.PATCH = PATCH;
+exports.DELETE = DELETE;
+const banners_1 = require("../../../../modules/banners");
+async function GET(req, res) {
+    const svc = req.scope.resolve(banners_1.BANNERS_MODULE);
+    const { id } = req.params;
+    const banner = await svc.retrieveBanner(id);
+    res.json({ banner });
+}
+async function POST(req, res) {
+    // The Medusa admin UI occasionally uses POST with an override; treat it
+    // as a PATCH so the same route handles both idioms.
+    return PATCH(req, res);
+}
+async function PATCH(req, res) {
+    const svc = req.scope.resolve(banners_1.BANNERS_MODULE);
+    const { id } = req.params;
+    const body = (req.body || {});
+    const update = { id };
+    const allowed = [
+        "title",
+        "subtitle",
+        "image_url",
+        "image_url_mobile",
+        "link_url",
+        "cta_label",
+        "sort_order",
+        "is_active",
+        "text_position",
+        "theme",
+    ];
+    for (const key of allowed) {
+        if (key in body)
+            update[key] = body[key];
+    }
+    // Coerce sort_order to a number so form inputs don't persist strings.
+    if (typeof update.sort_order === "string") {
+        update.sort_order = parseInt(update.sort_order, 10) || 0;
+    }
+    const [banner] = await svc.updateBanners([update]);
+    res.json({ banner });
+}
+async function DELETE(req, res) {
+    const svc = req.scope.resolve(banners_1.BANNERS_MODULE);
+    const { id } = req.params;
+    await svc.deleteBanners([id]);
+    res.json({ id, deleted: true });
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicm91dGUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi8uLi8uLi9zcmMvYXBpL2FkbWluL2Jhbm5lcnMvW2lkXS9yb3V0ZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUlBLGtCQUtDO0FBRUQsb0JBSUM7QUFFRCxzQkE2QkM7QUFFRCx3QkFLQztBQXBERCx5REFBNEQ7QUFHckQsS0FBSyxVQUFVLEdBQUcsQ0FBQyxHQUFrQixFQUFFLEdBQW1CO0lBQy9ELE1BQU0sR0FBRyxHQUF5QixHQUFHLENBQUMsS0FBSyxDQUFDLE9BQU8sQ0FBQyx3QkFBYyxDQUFDLENBQUE7SUFDbkUsTUFBTSxFQUFFLEVBQUUsRUFBRSxHQUFHLEdBQUcsQ0FBQyxNQUFNLENBQUE7SUFDekIsTUFBTSxNQUFNLEdBQUcsTUFBTSxHQUFHLENBQUMsY0FBYyxDQUFDLEVBQUUsQ0FBQyxDQUFBO0lBQzNDLEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRSxNQUFNLEVBQUUsQ0FBQyxDQUFBO0FBQ3RCLENBQUM7QUFFTSxLQUFLLFVBQVUsSUFBSSxDQUFDLEdBQWtCLEVBQUUsR0FBbUI7SUFDaEUsd0VBQXdFO0lBQ3hFLG9EQUFvRDtJQUNwRCxPQUFPLEtBQUssQ0FBQyxHQUFHLEVBQUUsR0FBRyxDQUFDLENBQUE7QUFDeEIsQ0FBQztBQUVNLEtBQUssVUFBVSxLQUFLLENBQUMsR0FBa0IsRUFBRSxHQUFtQjtJQUNqRSxNQUFNLEdBQUcsR0FBeUIsR0FBRyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsd0JBQWMsQ0FBQyxDQUFBO0lBQ25FLE1BQU0sRUFBRSxFQUFFLEVBQUUsR0FBRyxHQUFHLENBQUMsTUFBTSxDQUFBO0lBQ3pCLE1BQU0sSUFBSSxHQUFHLENBQUMsR0FBRyxDQUFDLElBQUksSUFBSSxFQUFFLENBQXdCLENBQUE7SUFFcEQsTUFBTSxNQUFNLEdBQXdCLEVBQUUsRUFBRSxFQUFFLENBQUE7SUFDMUMsTUFBTSxPQUFPLEdBQUc7UUFDZCxPQUFPO1FBQ1AsVUFBVTtRQUNWLFdBQVc7UUFDWCxrQkFBa0I7UUFDbEIsVUFBVTtRQUNWLFdBQVc7UUFDWCxZQUFZO1FBQ1osV0FBVztRQUNYLGVBQWU7UUFDZixPQUFPO0tBQ1IsQ0FBQTtJQUNELEtBQUssTUFBTSxHQUFHLElBQUksT0FBTyxFQUFFLENBQUM7UUFDMUIsSUFBSSxHQUFHLElBQUksSUFBSTtZQUFFLE1BQU0sQ0FBQyxHQUFHLENBQUMsR0FBRyxJQUFJLENBQUMsR0FBRyxDQUFDLENBQUE7SUFDMUMsQ0FBQztJQUVELHNFQUFzRTtJQUN0RSxJQUFJLE9BQU8sTUFBTSxDQUFDLFVBQVUsS0FBSyxRQUFRLEVBQUUsQ0FBQztRQUMxQyxNQUFNLENBQUMsVUFBVSxHQUFHLFFBQVEsQ0FBQyxNQUFNLENBQUMsVUFBVSxFQUFFLEVBQUUsQ0FBQyxJQUFJLENBQUMsQ0FBQTtJQUMxRCxDQUFDO0lBRUQsTUFBTSxDQUFDLE1BQU0sQ0FBQyxHQUFHLE1BQU0sR0FBRyxDQUFDLGFBQWEsQ0FBQyxDQUFDLE1BQWEsQ0FBQyxDQUFDLENBQUE7SUFDekQsR0FBRyxDQUFDLElBQUksQ0FBQyxFQUFFLE1BQU0sRUFBRSxDQUFDLENBQUE7QUFDdEIsQ0FBQztBQUVNLEtBQUssVUFBVSxNQUFNLENBQUMsR0FBa0IsRUFBRSxHQUFtQjtJQUNsRSxNQUFNLEdBQUcsR0FBeUIsR0FBRyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsd0JBQWMsQ0FBQyxDQUFBO0lBQ25FLE1BQU0sRUFBRSxFQUFFLEVBQUUsR0FBRyxHQUFHLENBQUMsTUFBTSxDQUFBO0lBQ3pCLE1BQU0sR0FBRyxDQUFDLGFBQWEsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUE7SUFDN0IsR0FBRyxDQUFDLElBQUksQ0FBQyxFQUFFLEVBQUUsRUFBRSxPQUFPLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQTtBQUNqQyxDQUFDIn0=
