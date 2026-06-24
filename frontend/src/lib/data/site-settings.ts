@@ -122,6 +122,8 @@ export type SiteSettings = {
   theme_radius_btn?: string
   theme_radius_search?: string
   theme_radius_input?: string
+  theme_radius_mobile_footer?: string
+  theme_mobile_footer_border?: string
 
   // Feature toggles (admin-managed)
   whatsapp_number?: string

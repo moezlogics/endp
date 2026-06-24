@@ -65,6 +65,7 @@ const DEFAULTS = {
   radius_btn: "default",
   radius_search: "default",
   radius_input: "default",
+  mobile_footer_border: "",
 }
 
 const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/
@@ -282,6 +283,8 @@ export function buildTheme(s: SiteSettings): ThemeRuntime {
   const radiusBtn = resolveIndividualRadius(s.theme_radius_btn, "lg")
   const radiusSearch = resolveIndividualRadius(s.theme_radius_search, "xl", "full")
   const radiusInput = resolveIndividualRadius(s.theme_radius_input, "base")
+  const radiusMobileFooter = resolveIndividualRadius(s.theme_radius_mobile_footer, "xl")
+  const mobileFooterBorder = pickWithFallback(s, "mobile_footer_border", border)
 
   // RGB triplet form for Tailwind opacity modifiers
   const map: Record<string, string> = {
@@ -318,6 +321,7 @@ export function buildTheme(s: SiteSettings): ThemeRuntime {
     "--color-card-bg": hexToRgbTriplet(card_bg),
     "--color-card-border": hexToRgbTriplet(card_border),
     "--color-price": hexToRgbTriplet(price_color),
+    "--color-mobile-footer-border": hexToRgbTriplet(mobileFooterBorder),
 
     // Hex form (for places that need a direct color value, e.g. SVGs)
     "--hex-primary": primary,
@@ -344,6 +348,7 @@ export function buildTheme(s: SiteSettings): ThemeRuntime {
     "--hex-card-bg": card_bg,
     "--hex-card-border": card_border,
     "--hex-price": price_color,
+    "--hex-mobile-footer-border": mobileFooterBorder,
 
     // Legacy Anvogue tokens — aliased so existing components keep working
     "--green": accent,
@@ -368,6 +373,7 @@ export function buildTheme(s: SiteSettings): ThemeRuntime {
     "--radius-btn": radiusBtn,
     "--radius-search": radiusSearch,
     "--radius-input": radiusInput,
+    "--radius-mobile-footer": radiusMobileFooter,
     "--container-width": containerW,
     "--font-stack": fontStack,
   }
